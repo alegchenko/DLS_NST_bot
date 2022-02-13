@@ -1,13 +1,15 @@
 # DLS_NST_bot
 DLS telegram-bots final project
 
+Вариант 1
 
 Запуск хостинга осуществляется с помощью run_hosting.py
 
+Отчет лежит в файлах репозитория в pdf формате (последние изминение было связано с этим)
 
-Ссылка на отчёт
+Ссылка на отчёт (Аналог пдфки в репозитории)
 
-https://drive.google.com/file/d/1A7TFdXnlKjWt_JsUwisjH6Q6IWe7SNXw/view?usp=sharing
+https://docs.google.com/document/d/1DTQ6eirtPgJPjRkUd0xkAQULq22poC5l/edit?usp=sharing&ouid=113146755203817294600&rtpof=true&sd=true
 
 Итог работы: 
 
