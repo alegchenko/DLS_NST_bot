@@ -357,9 +357,9 @@ class NST():
 
           input_img.requires_grad_(True)
           model.requires_grad_(False)
-          best_img = [input_img.clone()]
+          best_img = [input_img.clone()] #Запоминание изображения с лучшими показателями
           best_losses = []
-
+#Шедулер был добавлен в связи с нестабильностью лосов в некоторых случаях и применяется при скачках лоса 
           optimizer = self.get_input_optimizer(input_img)
           scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.97)
 
@@ -372,7 +372,7 @@ class NST():
                   # correct the values of updated input image
                   with torch.no_grad():
                       input_img.clamp_(0, 1)
-
+#Расчет лоссов на фичи cnn и оптимизации пикселей изображения для уменьшения суммарной ошбки
                   optimizer.zero_grad()
                   model(input_img)
                   style_score = 0

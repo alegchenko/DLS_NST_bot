@@ -28,16 +28,16 @@ class Full_bot(NST):
       def __init__(self, vgg, res):
         super(Full_bot, self).__init__()
         self.imsize = 512
-        self.epochs = 350
+        self.epochs = 350 
         self.res = res 
         self.vgg = vgg
         self.is_vgg = True #Флаг определяющий выбранную модель
 
-
+#Метод для вызова готового скрипта был наиболее простой интеграцией готовой модели SRGAN
       def super_res_run(self, path):
           os.system("python3 ./eval.py -c '' -i configs/srgan.json resources/pretrained/srgan.pth photos/img.jpg")
 
-
+#Метод строящий необходимую часть модели с добавленными слоями выходов лосов
       def get_model_and_losses(self, content_img, style_img):
           #Проверим какая из моделей выбрана
           if self.is_vgg:
@@ -49,7 +49,7 @@ class Full_bot(NST):
               normalization = Normalization(normalization_mean, normalization_std).to(device)
               content_layers = ['conv_4']
               style_layers = ['conv_1','conv_2','conv_3','conv_4', 'conv_5']
-
+#Оптимальная конфигурация 
               # just in order to have an iterable access to or list of content/syle
               # losses
               content_losses = []
@@ -58,7 +58,7 @@ class Full_bot(NST):
               # assuming that cnn is a nn.Sequential, so we make a new nn.Sequential
               # to put in modules that are supposed to be activated sequentially
               model = nn.Sequential(normalization)
-
+#Цикл пробегающий по слоя модели и создающий вставки выходов лосов при обнаружение Conv 
               i = 0  # increment every time we see a conv
               for layer in cnn.children():
                   if isinstance(layer, nn.Conv2d):
@@ -104,7 +104,7 @@ class Full_bot(NST):
           else:
               self.epochs = 700
               cnn = self.res 
-              model = SubModel(cnn, content_img, style_img)
+              model = SubModel(cnn, content_img, style_img) #SubModel мой класс в котором прописаны пути вычислений по слоям взятым из resnet
               style_losses = model.style_losses
               content_losses = model.content_losses
 

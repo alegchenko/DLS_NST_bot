@@ -35,7 +35,7 @@ class VGG_NST(NST):
           normalization = Normalization(normalization_mean, normalization_std).to(device)
           content_layers = ['conv_4']
           style_layers = ['conv_1','conv_2','conv_3','conv_4', 'conv_5']
-
+# Оптимальная конфигурация
           # just in order to have an iterable access to or list of content/syle
           # losses
           content_losses = []
@@ -44,7 +44,7 @@ class VGG_NST(NST):
           # assuming that cnn is a nn.Sequential, so we make a new nn.Sequential
           # to put in modules that are supposed to be activated sequentially
           model = nn.Sequential(normalization)
-
+#Пробегаем по слоям vgg копируя их и делая вставки для возможности получения промежуточных активаций и расчета лоссов на них
           i = 0  # increment every time we see a conv
           for layer in cnn.children():
               if isinstance(layer, nn.Conv2d):
