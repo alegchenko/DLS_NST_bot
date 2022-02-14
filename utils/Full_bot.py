@@ -35,7 +35,8 @@ class Full_bot(NST):
 
 #Метод для вызова готового скрипта был наиболее простой интеграцией готовой модели SRGAN
       def super_res_run(self, path):
-          os.system("python3 ./eval.py -c '' -i configs/srgan.json resources/pretrained/srgan.pth photos/img.jpg")
+          status = os.system("python3 ./eval.py -c '' -i configs/srgan.json resources/pretrained/srgan.pth photos/img.jpg")
+          return status
 
 #Метод строящий необходимую часть модели с добавленными слоями выходов лосов
       def get_model_and_losses(self, content_img, style_img):
@@ -213,7 +214,7 @@ class Full_bot(NST):
 
               elif message.text is None:
                   bot.send_message(message.from_user.id, "Неверный тип сообщения");
-                  chose(message)
+                  chose_style_source(message)
               else:
 
                   if message.text == 'Готовые стили':
@@ -388,15 +389,24 @@ class Full_bot(NST):
                   # записываем данные в файл
                       new_file.write(downloaded_file)
                   bot.send_message(message.from_user.id, "Начинаем обработку, это может занять некоторое время")
-                  self.super_res_run(path)
-                  img = open('photos/img_pred.png', 'rb')
-                  bot.send_photo(message.from_user.id, photo=img);
-                  markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-                  btn1 = types.KeyboardButton('Повторим')
-                  btn2 = types.KeyboardButton('Вначало')
-                  markup.add(btn1, btn2)
-                  bot.send_message(message.from_user.id, "Чей займемся теперь?",reply_markup=markup)
-                  bot.register_next_step_handler(message, after_res);
+                  status = self.super_res_run(path)
+                  if status == 0:
+                      img = open('photos/img_pred.png', 'rb')
+                      bot.send_photo(message.from_user.id, photo=img);
+                      markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+                      btn1 = types.KeyboardButton('Повторим')
+                      btn2 = types.KeyboardButton('Вначало')
+                      markup.add(btn1, btn2)
+                      bot.send_message(message.from_user.id, "Чей займемся теперь?",reply_markup=markup)
+                      bot.register_next_step_handler(message, after_res);
+                  else:
+                      bot.send_photo(message.from_user.id, photo=img);
+                      markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+                      btn1 = types.KeyboardButton('Повторим')
+                      btn2 = types.KeyboardButton('Вначало')
+                      markup.add(btn1, btn2)
+                      bot.send_message(message.from_user.id, "Сбой обработки",reply_markup=markup)
+                      bot.register_next_step_handler(message, after_res);
                   
 
 
@@ -451,7 +461,7 @@ class Full_bot(NST):
                   btn2 = types.KeyboardButton('Готовые стили')
                   btn3 = types.KeyboardButton('Продолжить с тем же стилем')
                   markup.add(btn1, btn2, btn3)
-                  bot.send_message(message.from_user.id, "Для продолжения с тем же стилем отправьте continue, для загрузки нового стиля new_style, для просмотра имеющихся стилей def_styles",reply_markup=markup);
+                  bot.send_message(message.from_user.id, "Для продолжения с тем же стилем отправьте 'Продолжить с тем же стилем', для загрузки нового стиля 'Новый стиль', для просмотра имеющихся стилей 'Готовые стили'",reply_markup=markup);
                   bot.register_next_step_handler(message, how_to_continue);
 
 
@@ -493,4 +503,4 @@ class Full_bot(NST):
 
 
           #Запускаем хостинг бота
-          bot.polling(none_stop=True, interval=0)
+          bot.polling(none_stop=True, interval=0,timeout = 123)
